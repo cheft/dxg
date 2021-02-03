@@ -9,9 +9,9 @@ cc.Class({
   extends: cc.Component,
 
   properties: {
-    fruit: {
+    scoreLabel: {
       default: null,
-      type: cc.Sprite,
+      type: cc.Label
     },
 
     prefabs: {
@@ -21,36 +21,56 @@ cc.Class({
   },
 
   onLoad() {
+    this.scores = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024];
+    this.score = 0;
+
     cc.director.getPhysicsManager().enabled = true;
 
     cc.director.getCollisionManager().enabled = true;
     // cc.director.getCollisionManager().enabledDebugDraw = true;
 
-    // this.node.on('touchstart', this.onTouchstart, this);
-    // this.node.on('touchmove', this.onTouchmove, this);
+    this.node.on('touchstart', this.onTouchstart, this);
+    this.node.on('touchmove', this.onTouchmove, this);
     this.node.on('touchend', this.onTouchend, this);
-    window.game = this;
   },
 
   onDestroy () {
+    this.node.off('touchstart', this.onTouchstart, this);
+    this.node.off('touchmove', this.onTouchmove, this);
     this.node.off('touchend', this.onTouchend, this);
   },
 
-  onTouchend(event) {
+  onTouchstart(event) {
     var p = this.node.convertToNodeSpaceAR(event.getLocation());
-    // this.fruit.node.x = p.x;
-    var num = parseInt(Math.random() * 2) + 1;
-    this.newFruit(num, p);
+    p.y = this.node.height / 2 - 100; // TODO:
+    var num = parseInt(Math.random() * 5) + 1;
+    this.fruit = this.newFruit(num, p);
+    this.updateScore(this.scores[num]);
+    cc.director.getPhysicsManager().enabled = false;
+  },
+
+  onTouchmove(event) {
+    var p = this.node.convertToNodeSpaceAR(event.getLocation());
+    p.y = this.node.height / 2 - 100; // TODO:
+    this.fruit.setPosition(p);
+  },
+
+  onTouchend(event) {
+    cc.director.getPhysicsManager().enabled = true;
   },
 
   newFruit(num, p) {
     var fruit = cc.instantiate(this.prefabs[num]);
     this.node.addChild(fruit);
+    fruit.game = this;
     fruit.setPosition(p);
-    fruit.enabledContactListener = true;
+    return fruit;
   },
 
-  update(dt) {
-    
+  updateScore(addScore) {
+    this.score += addScore;
+    this.scoreLabel.string = this.score + '';
   },
+
+  update(dt) {},
 });

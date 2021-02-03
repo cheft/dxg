@@ -12,15 +12,19 @@ cc.Class({
   onBeginContact: function (contact, self, other) {
     if (self.tag === other.tag) {
       if (self.node && other.node) {
+        let game = self.node.game;
         if (game.islock) {
           return;
         }
         var pos = self.node.getPosition();
         game.islock = true;
         setTimeout(() => {
+          let level = parseInt(self.tag) + 1;
+          game.newFruit(level, pos); // TODO: position
           self.node.destroy();
           other.node.destroy();
-          game.newFruit(parseInt(self.tag) + 1, pos); // TODO: position
+          var addScore = game.scores[level] - game.scores[level - 1] * 2;
+          game.updateScore(addScore);
           game.islock = false;
         }, 0);
       }

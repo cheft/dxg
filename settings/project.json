@@ -19,8 +19,8 @@
   "preview-port": 7456,
   "design-resolution-width": 720,
   "design-resolution-height": 1280,
-  "fit-width": false,
-  "fit-height": true,
+  "fit-width": true,
+  "fit-height": false,
   "use-project-simulator-setting": false,
   "simulator-orientation": false,
   "use-customize-simulator": true,
@@ -38,5 +38,6 @@
     "live": {
       "enable": false
     }
-  }
+  },
+  "last-module-event-record-time": 1612331430971
 }
