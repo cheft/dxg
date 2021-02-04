@@ -9,7 +9,7 @@
     "portrait": false,
     "upsideDown": false
   },
-  "webOrientation": "auto",
+  "webOrientation": "portrait",
   "inlineSpriteFrames": true,
   "inlineSpriteFrames_native": true,
   "mainCompressionType": "default",
@@ -51,5 +51,8 @@
     "skipRecord": false
   },
   "appBundle": false,
-  "agreements": {}
+  "agreements": {
+    "20200904180716": true,
+    "20200904180755": true
+  }
 }
