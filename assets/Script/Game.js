@@ -51,7 +51,7 @@ cc.Class({
   },
 
   onTouchmove(event) {
-    if (!this.line.awake) {
+    if (!this.line.active) {
       return;
     }
     var p = this.node.convertToNodeSpaceAR(event.getLocation());
