@@ -16,11 +16,15 @@ cc.Class({
         if (game.islock) {
           return;
         }
-        var pos = self.node.getPosition();
         game.islock = true;
         setTimeout(() => {
+          var pos1 = self.node.getPosition();
+          var pos2 = other.node.getPosition();
+          pos1.x = (pos1.x + pos2.x) / 2;
+          pos1.y = (pos1.y + pos2.y) / 2;
+          
           let level = parseInt(self.tag) + 1;
-          game.newFruit(level, pos); // TODO: position
+          game.newFruit(level, pos1);
           self.node.destroy();
           other.node.destroy();
           var addScore = game.scores[level] - game.scores[level - 1] * 2;

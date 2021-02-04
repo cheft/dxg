@@ -9,6 +9,11 @@ cc.Class({
   extends: cc.Component,
 
   properties: {
+    viewFruit: {
+      default: null,
+      type: cc.Sprite
+    },
+
     scoreLabel: {
       default: null,
       type: cc.Label
@@ -29,41 +34,42 @@ cc.Class({
     cc.director.getCollisionManager().enabled = true;
     // cc.director.getCollisionManager().enabledDebugDraw = true;
 
-    this.node.on('touchstart', this.onTouchstart, this);
     this.node.on('touchmove', this.onTouchmove, this);
     this.node.on('touchend', this.onTouchend, this);
+
+    this.previewFruit(1);
   },
 
   onDestroy () {
-    this.node.off('touchstart', this.onTouchstart, this);
     this.node.off('touchmove', this.onTouchmove, this);
     this.node.off('touchend', this.onTouchend, this);
   },
 
-  onTouchstart(event) {
-    var p = this.node.convertToNodeSpaceAR(event.getLocation());
-    p.y = this.node.height / 2 - 100; // TODO:
-    var num = parseInt(Math.random() * 5) + 1;
-    this.fruit = this.newFruit(num, p);
-    this.updateScore(this.scores[num]);
-    cc.director.getPhysicsManager().enabled = false;
-  },
-
   onTouchmove(event) {
     var p = this.node.convertToNodeSpaceAR(event.getLocation());
-    p.y = this.node.height / 2 - 100; // TODO:
-    this.fruit.setPosition(p);
+    this.viewFruit.node.x = p.x;
   },
 
   onTouchend(event) {
-    cc.director.getPhysicsManager().enabled = true;
+    this.fruit = this.newFruit(this.nextNum, this.viewFruit.node.getPosition());
+    this.updateScore(this.scores[this.nextNum]);
+    this.previewFruit(parseInt(Math.random() * 5) + 1);
+  },
+
+  previewFruit(num) {
+    this.nextNum = num || 1;
+    if (this.viewFruit.node && this.viewFruit.node.children) {
+      this.viewFruit.node.children.forEach((node) => {
+        node.opacity = (node.name == this.nextNum) ? 255 : 0;
+      })
+    }
   },
 
   newFruit(num, p) {
     var fruit = cc.instantiate(this.prefabs[num]);
     this.node.addChild(fruit);
-    fruit.game = this;
     fruit.setPosition(p);
+    fruit.game = this;
     return fruit;
   },
 
