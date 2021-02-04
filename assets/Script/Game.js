@@ -42,6 +42,9 @@ cc.Class({
     this.node.on('touchmove', this.onTouchmove, this);
     this.node.on('touchend', this.onTouchend, this);
 
+    this.viewFruit.node.children.forEach((node) => {
+      node.active = false
+    })
     this.previewFruit(1);
   },
 
@@ -58,7 +61,7 @@ cc.Class({
     this.viewFruit.node.x = p.x;
   },
 
-  onTouchend() {
+  onTouchend(event) {
     if (!this.line.active) {
       return;
     }
@@ -66,6 +69,9 @@ cc.Class({
     this.viewFruit.node.children.forEach((node) => {
       node.active = false
     })
+
+    var p = this.node.convertToNodeSpaceAR(event.getLocation());
+    this.viewFruit.node.x = p.x;
 
     this.fruit = this.newFruit(this.nextNum, this.viewFruit.node.getPosition());
     this.updateScore(this.scores[this.nextNum]);
