@@ -4,6 +4,7 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
+var global = require('Global');
 
 cc.Class({
   extends: cc.Component,
@@ -12,6 +13,11 @@ cc.Class({
     viewFruit: {
       default: null,
       type: cc.Sprite
+    },
+
+    line: {
+      default: null,
+      type: cc.Node,
     },
 
     scoreLabel: {
@@ -27,11 +33,10 @@ cc.Class({
 
   onLoad() {
     this.scores = [0, 1, 2, 4, 8, 16, 32, 64, 128, 256, 512, 1024];
-    this.score = 0;
 
     cc.director.getPhysicsManager().enabled = true;
 
-    cc.director.getCollisionManager().enabled = true;
+    // cc.director.getCollisionManager().enabled = true;
     // cc.director.getCollisionManager().enabledDebugDraw = true;
 
     this.node.on('touchmove', this.onTouchmove, this);
@@ -46,23 +51,41 @@ cc.Class({
   },
 
   onTouchmove(event) {
+    if (!this.line.awake) {
+      return;
+    }
     var p = this.node.convertToNodeSpaceAR(event.getLocation());
     this.viewFruit.node.x = p.x;
   },
 
-  onTouchend(event) {
+  onTouchend() {
+    if (!this.line.active) {
+      return;
+    }
+    this.line.active = false;
+    this.viewFruit.node.children.forEach((node) => {
+      node.active = false
+    })
+
     this.fruit = this.newFruit(this.nextNum, this.viewFruit.node.getPosition());
     this.updateScore(this.scores[this.nextNum]);
-    this.previewFruit(parseInt(Math.random() * 5) + 1);
+    
+    setTimeout(() => {
+      this.line.active = true;
+      this.previewFruit(parseInt(Math.random() * 5) + 1);
+    }, 300);
   },
 
   previewFruit(num) {
     this.nextNum = num || 1;
-    if (this.viewFruit.node && this.viewFruit.node.children) {
-      this.viewFruit.node.children.forEach((node) => {
-        node.opacity = (node.name == this.nextNum) ? 255 : 0;
-      })
-    }
+    this.viewFruit.node.x = 0;
+    this.viewFruit.node.scale = 0.5;
+    this.viewFruit.node.children.forEach((node) => {
+      if(node.name == this.nextNum) {
+        node.active = true;
+        return;
+      }
+    })
   },
 
   newFruit(num, p) {
@@ -74,9 +97,13 @@ cc.Class({
   },
 
   updateScore(addScore) {
-    this.score += addScore;
-    this.scoreLabel.string = this.score + '';
+    global.score += addScore;
+    this.scoreLabel.string = global.score;
   },
 
-  update(dt) {},
+  update(dt) {
+    if (this.viewFruit.node.scale < 1) {
+      this.viewFruit.node.scale += 0.04;
+    }
+  },
 });

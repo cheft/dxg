@@ -1,8 +1,7 @@
 cc.Class({
   extends: cc.Component,
 
-  properties: {
-  },
+  properties: {},
 
   // onLoad () {},
   // start () {},
@@ -34,4 +33,11 @@ cc.Class({
       }
     }
   },
+
+  onEndContact(contact, self, other) {
+    // console.log(self.tag, other.tag);
+    if (self.tag == 99 || other.tag == 99) {
+      cc.director.loadScene("GameOver");
+    }
+  }
 });
